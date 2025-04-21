@@ -9,10 +9,11 @@ import { User } from "../models/user.models.js";
 //user will be authenticated via middleware for all these functions 
 
 const getProjects = asyncHandler(async (req, res) => {
-  // get all projects
   const { userId } = req.user;
 
-  const projects = "get all projects";
+  const projects = await ProjectMember
+    .find({ user: userId })
+    .populate({ path: 'project' });
 
   if (!projects) {
     throw new ApiError(404, "Projects not found");
@@ -74,12 +75,12 @@ const createProject = asyncHandler(async (req, res) => {
 
 const updateProject = asyncHandler(async (req, res) => {
   const { name, description } = req.params;
-  const { _id } = req.params;
+  const { projectId } = req.params;
 
   /////TODO validate name via validators
 
   const project = await Project.findByIdAndUpdate(
-    _id,
+    projectId,
     {
       $set: {
         name,
@@ -102,9 +103,9 @@ const updateProject = asyncHandler(async (req, res) => {
 
 
 const deleteProject = asyncHandler(async (req, res) => {
-  const { _id } = req.params;
+  const { projectId } = req.params;
 
-  const project = await Project.findOneAndDelete(_id);
+  const project = await Project.findOneAndDelete({_id: projectId});
 
   if (!project) {
     throw new ApiError(500, "Deleted project not found");
@@ -115,6 +116,8 @@ const deleteProject = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, project, "Project Deleted Successfully!"));
 });
 
+
+//----------------------------------------------------------------------
 const getProjectMember = asyncHandler(async (id) => {
   const user = await User.findById(id).select("-password");
 
@@ -206,7 +209,7 @@ const updateMemberRole = asyncHandler(async (req, res) => {
   //check if current user is admin using middleware 
 
   const projectMemberId = req.params;
-  const {role} = req.body;
+  const { role } = req.body;
   ///////TODO: validate role
 
   const updatedMember = await ProjectMember.findByIdAndUpdate(
@@ -236,8 +239,8 @@ export {
   deleteMember,
   deleteProject,
   getProjectById,
-  getProjectMembers,
   getProjects,
+  getProjectMembers,
   updateMemberRole,
   updateProject,
 };

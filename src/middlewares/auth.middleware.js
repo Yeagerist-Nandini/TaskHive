@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import { ApiError } from "../utils/api-error"
-
+ 
 export const isLoggedIn = (req,res,next) => {
     try {
         const token = req.cookies?.access_token;
@@ -12,9 +12,8 @@ export const isLoggedIn = (req,res,next) => {
         const payload = jwt.verify(access_token,process.env.ACCESS_TOKEN_SECRET)
         req.user = payload;
 
+        next();
     } catch (error) {
-        throw new ApiError(500, "Internal server error", [error])
+        throw next(new ApiError(500, "Internal server error", [error]));
     }
-
-    next();
 }
