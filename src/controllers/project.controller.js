@@ -159,8 +159,6 @@ const getProjectMembers = asyncHandler(async (req, res) => {
 
 
 const addMemberToProject = asyncHandler(async (req, res) => {
-  ////// check if current user is admin using middleware
-
   // get other fields
   const { projectId } = req.params;
   const { email, role } = req.body;
@@ -190,8 +188,6 @@ const addMemberToProject = asyncHandler(async (req, res) => {
 
 
 const deleteMember = asyncHandler(async (req, res) => {
-  //check if current user is admin using middleware 
-
   const projectMemberId = req.params;
   const deletedMember = await ProjectMember.findByIdAndDelete(projectMemberId);
 
@@ -206,8 +202,6 @@ const deleteMember = asyncHandler(async (req, res) => {
 
 
 const updateMemberRole = asyncHandler(async (req, res) => {
-  //check if current user is admin using middleware 
-
   const projectMemberId = req.params;
   const { role } = req.body;
   ///////TODO: validate role
