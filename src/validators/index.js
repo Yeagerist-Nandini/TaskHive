@@ -19,7 +19,7 @@ const userRegistrationValidator = () => {
         body("password")
           .trim()
           .isEmpty().withMessage("password is required")
-          .isLength({min:6}).withMessage("password lenght should be more than 5")
+          .isLength({min:6}).withMessage("password length should be more than 5")
           .isStrongPassword({
             minLength: 6,
             minLowercase: 1,
@@ -33,8 +33,11 @@ const userRegistrationValidator = () => {
 const userLoginValidator = () => {
     return [
         body("email")
+          .trim()
+          .notEmpty().withMessage("Email is required")
           .isEmail().withMessage("Email is not valid"),
         body("password")
+          .trim()
           .isEmpty().withMessage("Password is required"),
     ];
 }

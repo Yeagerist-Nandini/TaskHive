@@ -1,13 +1,16 @@
 import Mailgen from "mailgen";
 import nodemailer from "nodemailer"
+import dotenv from "dotenv"
+
+dotenv.config();
 
 
 const sendEmail = async(options) => {
     const mailGenerator = new Mailgen({
         theme: "default",
         product: {
-            name: "Task Manager",
-            link: "https://taskmanager.app",
+            name: "Task Hive",
+            link: "https://taskhive.app",
         }
     });
  
@@ -28,7 +31,7 @@ const sendEmail = async(options) => {
     })
 
     const mailOptions = {
-        from: "mail.taskmanager@exmaple.com", // sender address
+        from: process.env.MAILTRAP_SMTP_SENDER, // sender address
         to: options.email, // list of receivers
         subject: options.subject, // Subject line
         text: emailText, // plain text body
@@ -53,7 +56,7 @@ const emailVerificationMailgenContent = (username, verificationUrl) => {
     return {
         body: {
             name: username ,
-            intro: "Welcome to our app! We're very excited to have you on board.",
+            intro: "Welcome to our TaskHive! We're very excited to have you on board.",
             action: {
                 instructions: "To verify your email please click on the following button:",
                 button: {
@@ -72,7 +75,7 @@ const forgotPasswordMailgenContent = (username, resetPasswordUrl) => {
     return {
         body: {
             name: username ,
-            intro: 'Welcome to Mailgen! We\'re very excited to have you on board.',
+            intro: 'Welcome to TaskHive!',
             action: {
                 instructions: "To reset your password click on the following button or link:",
                 button: {
