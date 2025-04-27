@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
-import { ApiError } from "../utils/api-error"
- 
+import { ApiError } from "../utils/api-error.js"
+  
 export const isLoggedIn = (req,res,next) => {
     try {
         const token = req.cookies?.access_token;

@@ -1,8 +1,8 @@
-import Task from '../models/task.models.js'
+import {Task} from '../models/task.models.js'
 import { ApiError } from '../utils/api-error.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { asyncHandler } from '../utils/async-handler.js';
-import SubTask from '../models/subtask.models.js'
+import {SubTask} from '../models/subtask.models.js'
 
 
 const getTasks = asyncHandler(async (req, res) => {

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    container_name: mongodb-container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodbdata:/data/db
+
+volumes:
+  mongodbdata:
+
+# docker-compose up -d

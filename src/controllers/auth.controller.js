@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { emailVerificationMailgenContent, forgotPasswordMailgenContent, sendEmail } from "../utils/mail.js";
 import crypto from "crypto"
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken" 
+import jwt from "jsonwebtoken"  
 
 /////////////////////////////////////////TODO: WRITE VALIDATIONS FOR FUNCTIONS 
 

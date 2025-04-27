@@ -6,7 +6,7 @@ import {
     getNotes, 
     updateNote
 } from '../controllers/note.controller.js'
-import isLoggedIn from '../middlewares/auth.middleware.js'
+import {isLoggedIn} from '../middlewares/auth.middleware.js'
 
 const router = Router();
 
