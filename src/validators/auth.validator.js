@@ -1,23 +1,23 @@
 import { body } from "express-validator";
 
 export const userRegistrationValidator = () => {
-  console.log(body);
+  // console.log(body);
   return [
     body("email")
       .trim()
       .notEmpty().withMessage("Email is required")
       .isEmail().withMessage("Invalid Email"),
     body("username")
-      .trim()
+      .trim() 
       .notEmpty().withMessage("Username is required")
       .isLength({ min: 3 }).withMessage("username should be atleast of 3 char")
       .isLength({ max: 13 }).withMessage("username cannot exceed 13 char"),
-    body("fullName")
+    body("fullname")
       .trim()
-      .isEmpty().withMessage("fullname is required"),
+      .notEmpty().withMessage("fullname is required"),
     body("password")
       .trim()
-      .isEmpty().withMessage("password is required")
+      .notEmpty().withMessage("password is required")
       .isLength({ min: 6 }).withMessage("password length should be more than 5")
       .isStrongPassword({
         minLength: 6,
@@ -37,7 +37,7 @@ export const userLoginValidator = () => {
       .isEmail().withMessage("Email is not valid"),
     body("password")
       .trim()
-      .isEmpty().withMessage("Password is required"),
+      .notEmpty().withMessage("Password is required"),
   ];
 }
 
@@ -45,7 +45,7 @@ export const resetPasswordValidator = () => {
   return [
     body("password")
       .trim()
-      .isEmpty().withMessage("Password is required")
+      .notEmpty().withMessage("Password is required")
       .isStrongPassword({
         minLength: 6,
         minLowercase: 1,
@@ -60,7 +60,7 @@ export const changePasswordValidator = () => {
   return [
     body("new_password")
       .trim()
-      .isEmpty().withMessage("Password is required")
+      .notEmpty().withMessage("Password is required")
       .isStrongPassword({
         minLength: 6,
         minLowercase: 1,
@@ -70,6 +70,6 @@ export const changePasswordValidator = () => {
       }).withMessage("Please set a strong password"),
     body("password")
       .trim()
-      .isEmpty().withMessage("Password is required")
+      .notEmpty().withMessage("Password is required")
   ]
 }

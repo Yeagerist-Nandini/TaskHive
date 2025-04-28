@@ -3,11 +3,11 @@ import {ApiError} from "../utils/api-error.js";
 
 export const validate = (req,res,next) => {
     const errors = validationResult(req);
-    console.log(req);
+    // console.log(req);
     console.log(errors);
     
     if(errors.isEmpty()){
-        next();
+        return next();
     }
 
     const extractedError = [];

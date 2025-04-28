@@ -3,13 +3,13 @@ import { ApiError } from "../utils/api-error.js"
   
 export const isLoggedIn = (req,res,next) => {
     try {
-        const token = req.cookies?.access_token;
+        const accessToken = req.cookies?.accessToken;
 
-        if(!token){
+        if(!accessToken){
             throw new ApiError(401, "Authentication Failed")
         }
 
-        const payload = jwt.verify(access_token,process.env.ACCESS_TOKEN_SECRET)
+        const payload = jwt.verify(accessToken,process.env.ACCESS_TOKEN_SECRET)
         req.user = payload;
 
         next();
