@@ -157,13 +157,9 @@ const verifyEmail = asyncHandler(async (req, res) => {
   user.emailVerificationToken = undefined;
   await user.save();
 
-});
-
-
-const resendEmailVerification = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
-
-  verifyEmail(req, res);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user._id, "Email verification successfull"));
 });
 
 
@@ -187,27 +183,61 @@ const resetForgottenPassword = asyncHandler(async (req, res) => {
   user.forgotPasswordExpiry = undefined;
   user.forgotPasswordToken = undefined;
   await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user._id, "New password created successfully"));
 });
 
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-  const { email, username, password, role } = req.body;
+  //get refresh token
+  const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+  if (!refreshToken) throw new ApiError(401, "unauthorized request");
 
-  //validation
+  // get payload from token
+  const decodedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+  //check if user exists
+  const user = await User.findById(decodedToken._id);
+  if (!user) {
+    throw new ApiError(401, "Invalid refresh token")
+  }
+
+  //check if refresh token is expired 
+  if (refreshToken !== user.refreshToken) {
+    throw new ApiError(401, "Refresh token is expired or used");
+  }
+
+  //get new accesstoken, refresh token 
+  const { accessToken, newRefreshToken } = await generateAccessAndRefreshToken(user.id);
+
+  // save it in cookies
+  const cookieOptions = {
+    httpOnly: true,
+    secure: true
+  }
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", newRefreshToken, cookieOptions)
+    .json(new ApiResponse(200, { accessToken, refreshToken: newRefreshToken }, "Access token refreshed"))
 });
 
 
 const forgotPasswordRequest = asyncHandler(async (req, res) => {
-  const userid = req.user._id;
+  const userId = req.user._id;
 
   //check if user exists
-  const user = await User.findById(userid);
+  const user = await User.findById(userId);
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
   //get token
   const token = crypto.randomBytes(32).toString("hex");
+
   //set reset password fields in DB
   user.forgotPasswordToken = token;
   user.forgotPasswordExpiry = Date.now() + (20 * 60 * 1000);
@@ -222,6 +252,10 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
     mailgenContent: forgotPasswordMailgenContent(user.username, resetPasswordUrl)
   }
   sendEmail(mailOptions);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, resetPasswordUrl, "Reset password link sent to your email."))
 });
 
 
@@ -229,12 +263,12 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { password, new_password } = req.body;
 
   //check if user is logged in 
-  const userid = req.user._id;
+  const userId = req.user._id;
 
   //check if user exists
-  const user = await User.findById(userid);
+  const user = await User.findById(userId);
   if (!user) {
-    throw new ApiError(404, "You are not logged in");
+    throw new ApiError(404, "User not found");
   }
 
   // check if old password is matching
@@ -246,6 +280,10 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   //change the password
   user.password = new_password;
   await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Password changed successfully!"));
 });
 
 
@@ -253,12 +291,20 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   //check if user is logged in and get userid
   const userid = req.user._id;
 
-  const user = await User.findById(userid);
+  const user = await User.findById(userid).select("email", "username", "fullname");
   if (!user) {
     throw new ApiError(404, "User not found")
   }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Fetched current user successfully"));
 });
 
+
+const resendEmailVerification = asyncHandler(async (req, res) => {
+  verifyEmail(req, res);
+});
 
 export {
   changeCurrentPassword,
