@@ -16,7 +16,7 @@ router.get('/projects/:projectId/notes/:noteId', isLoggedIn, getNoteById);
 
 router.post('/projects/:projectId/notes', isLoggedIn, createNote);
 
-router.patch('/projects/:projectId/notes/:noteId', isLoggedIn, updateNote);
+router.put('/projects/:projectId/notes/:noteId', isLoggedIn, updateNote);
 
 router.delete('/projects/:projectId/notes/:noteId', isLoggedIn, deleteNote);
 
